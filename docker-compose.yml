@@ -1,0 +1,42 @@
+version: "3.8"
+services:
+  storage:
+    image: mcr.microsoft.com/azure-storage/azurite
+    volumes: 
+      - azure-storage:/data
+    ports: 
+      - 10000:10000
+      - 10001:10001
+      - 10002:10002
+    networks:
+      - backend
+  vault:
+    image: vault
+    ports: 
+      - 8200:8200
+      - 8201:8201
+  postgre:
+    image: postgres:12
+    environment:
+      POSTGRES_PASSWORD: password
+    networks:
+      - backend
+    ports:
+      - 5432:5432
+    restart: always
+
+  rabbitmq:
+    image: rabbitmq:management-alpine
+    networks:
+      - backend
+    ports:
+      - 5672:5672
+      - 15672:15672
+    restart: always
+
+volumes: 
+  azure-storage:
+
+networks:
+  backend:
+    attachable: true
